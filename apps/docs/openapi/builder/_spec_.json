@@ -3642,6 +3642,73 @@
         }
       }
     },
+    "/typebots/{typebotId}/analytics/totalAnswersInBlocks": {
+      "get": {
+        "operationId": "analytics-getTotalAnswersInBlocks",
+        "summary": "List total answers in blocks",
+        "tags": [
+          "Analytics"
+        ],
+        "security": [
+          {
+            "Authorization": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "typebotId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "totalAnswersInBlocks": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "blockId": {
+                            "type": "string"
+                          },
+                          "itemId": {
+                            "type": "string"
+                          },
+                          "total": {
+                            "type": "number"
+                          }
+                        },
+                        "required": [
+                          "blockId",
+                          "total"
+                        ],
+                        "additionalProperties": false
+                      }
+                    }
+                  },
+                  "required": [
+                    "totalAnswersInBlocks"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "default": {
+            "$ref": "#/components/responses/error"
+          }
+        }
+      }
+    },
     "/workspaces": {
       "get": {
         "operationId": "workspace-listWorkspaces",
@@ -3833,6 +3900,9 @@
                         },
                         "isQuarantined": {
                           "type": "boolean"
+                        },
+                        "isSuspended": {
+                          "type": "boolean"
                         }
                       },
                       "required": [
@@ -3852,7 +3922,8 @@
                         "customChatsLimit",
                         "customStorageLimit",
                         "customSeatsLimit",
-                        "isQuarantined"
+                        "isQuarantined",
+                        "isSuspended"
                       ],
                       "additionalProperties": false
                     }
@@ -3978,6 +4049,9 @@
                         },
                         "isQuarantined": {
                           "type": "boolean"
+                        },
+                        "isSuspended": {
+                          "type": "boolean"
                         }
                       },
                       "required": [
@@ -3997,7 +4071,8 @@
                         "customChatsLimit",
                         "customStorageLimit",
                         "customSeatsLimit",
-                        "isQuarantined"
+                        "isQuarantined",
+                        "isSuspended"
                       ],
                       "additionalProperties": false
                     }
@@ -4140,6 +4215,9 @@
                         },
                         "isQuarantined": {
                           "type": "boolean"
+                        },
+                        "isSuspended": {
+                          "type": "boolean"
                         }
                       },
                       "required": [
@@ -4159,7 +4237,8 @@
                         "customChatsLimit",
                         "customStorageLimit",
                         "customSeatsLimit",
-                        "isQuarantined"
+                        "isQuarantined",
+                        "isSuspended"
                       ],
                       "additionalProperties": false
                     }
@@ -4818,6 +4897,10 @@
                                 "blockId": {
                                   "type": "string"
                                 },
+                                "itemId": {
+                                  "type": "string",
+                                  "nullable": true
+                                },
                                 "groupId": {
                                   "type": "string"
                                 },
@@ -4837,6 +4920,7 @@
                                 "createdAt",
                                 "resultId",
                                 "blockId",
+                                "itemId",
                                 "groupId",
                                 "variableId",
                                 "content",
@@ -5400,6 +5484,9 @@
                         },
                         "isQuarantined": {
                           "type": "boolean"
+                        },
+                        "isSuspended": {
+                          "type": "boolean"
                         }
                       },
                       "required": [
@@ -5419,7 +5506,8 @@
                         "customChatsLimit",
                         "customStorageLimit",
                         "customSeatsLimit",
-                        "isQuarantined"
+                        "isQuarantined",
+                        "isSuspended"
                       ],
                       "additionalProperties": false,
                       "nullable": true

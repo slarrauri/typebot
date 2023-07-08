@@ -125,10 +125,10 @@ export const sendMessage = publicProcedure
   )
 
 const startSession = async (startParams?: StartParams, userId?: string) => {
-  if (!startParams?.typebot)
+  if (!startParams)
     throw new TRPCError({
       code: 'BAD_REQUEST',
-      message: 'No typebot provided in startParams',
+      message: 'StartParams are missing',
     })
 
   const typebot = await getTypebot(startParams, userId)
@@ -301,6 +301,7 @@ const getTypebot = async (
                   additionalChatsIndex: true,
                   customChatsLimit: true,
                   isQuarantined: true,
+                  isSuspended: true,
                 },
               },
             },
@@ -326,12 +327,16 @@ const getTypebot = async (
       message: 'Typebot not found',
     })
 
-  const isQuarantined =
+  const isQuarantinedOrSuspended =
     typebotQuery &&
     'typebot' in typebotQuery &&
-    typebotQuery.typebot.workspace.isQuarantined
+    (typebotQuery.typebot.workspace.isQuarantined ||
+      typebotQuery.typebot.workspace.isSuspended)
 
-  if (('isClosed' in parsedTypebot && parsedTypebot.isClosed) || isQuarantined)
+  if (
+    ('isClosed' in parsedTypebot && parsedTypebot.isClosed) ||
+    isQuarantinedOrSuspended
+  )
     throw new TRPCError({
       code: 'BAD_REQUEST',
       message: 'Typebot is closed',

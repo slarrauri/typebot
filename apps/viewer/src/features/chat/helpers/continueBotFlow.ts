@@ -96,7 +96,18 @@ export const continueBotFlow =
         return parseRetryMessage(block)
       }
 
-      newSessionState = await processAndSaveAnswer(state, block)(formattedReply)
+      const nextEdgeId = getOutgoingEdgeId(newSessionState)(
+        block,
+        formattedReply
+      )
+      const itemId = nextEdgeId
+        ? state.typebot.edges.find(byId(nextEdgeId))?.from.itemId
+        : undefined
+      newSessionState = await processAndSaveAnswer(
+        state,
+        block,
+        itemId
+      )(formattedReply)
     }
 
     const groupHasMoreBlocks = blockIndex < group.blocks.length - 1
@@ -121,10 +132,10 @@ export const continueBotFlow =
   }
 
 const processAndSaveAnswer =
-  (state: SessionState, block: InputBlock) =>
+  (state: SessionState, block: InputBlock, itemId?: string) =>
   async (reply: string | null): Promise<SessionState> => {
     if (!reply) return state
-    let newState = await saveAnswer(state, block)(reply)
+    let newState = await saveAnswer(state, block, itemId)(reply)
     newState = await saveVariableValueIfAny(newState, block)(reply)
     return newState
   }
@@ -179,19 +190,19 @@ const parseRetryMessage = (
 }
 
 const saveAnswer =
-  (state: SessionState, block: InputBlock) =>
+  (state: SessionState, block: InputBlock, itemId?: string) =>
   async (reply: string): Promise<SessionState> => {
     const resultId = state.result?.id
-    const answer = {
-      resultId,
+    const answer: Omit<Prisma.AnswerUncheckedCreateInput, 'resultId'> = {
       blockId: block.id,
+      itemId,
       groupId: block.groupId,
       content: reply,
       variableId: block.options.variableId,
       storageUsed: 0,
     }
-    if (state.result.answers.length === 0 && state.result.id)
-      await setResultAsStarted(state.result.id)
+    if (state.result.answers.length === 0 && resultId)
+      await setResultAsStarted(resultId)
 
     const newSessionState = setNewAnswerInState(state)({
       blockId: block.id,
@@ -207,12 +218,16 @@ const saveAnswer =
         where: {
           resultId_blockId_groupId: {
             resultId,
-            groupId: block.groupId,
             blockId: block.id,
+            groupId: block.groupId,
           },
         },
-        create: answer as Prisma.AnswerUncheckedCreateInput,
-        update: answer,
+        create: { ...answer, resultId },
+        update: {
+          content: answer.content,
+          storageUsed: answer.storageUsed,
+          itemId: answer.itemId,
+        },
       })
     }
 
