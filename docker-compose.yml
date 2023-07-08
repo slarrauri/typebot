@@ -30,7 +30,7 @@ services:
     image: baptistearno/typebot-viewer:latest
     restart: always
     ports:
-      - '8081:3000'
+      - '8081:3001'
     # See https://docs.typebot.io/self-hosting/configuration/viewer for more configuration options
     environment:
       - DATABASE_URL=postgresql://postgres:typebot@typebot-db:5432/typebot
