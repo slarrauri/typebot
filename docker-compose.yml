@@ -10,7 +10,7 @@ services:
       - POSTGRES_PASSWORD=typebot
   typebot-builder:
     labels:
-      virtual.host: 'typebot.domain.com' # change to your domain
+      virtual.host: 'builder.what.ar' # change to your domain
       virtual.port: '3000'
       virtual.tls-email: 'admin@example.com' # change to your email
     image: baptistearno/typebot-builder:latest
@@ -22,19 +22,19 @@ services:
     # See https://docs.typebot.io/self-hosting/configuration for more configuration options
     environment:
       - DATABASE_URL=postgresql://postgres:typebot@typebot-db:5432/typebot
-      - NEXTAUTH_URL=https://typebot.domain.com
-      - NEXT_PUBLIC_VIEWER_URL=https://bot.domain.com
+      - NEXTAUTH_URL=https://builder.what.ar
+      - NEXT_PUBLIC_VIEWER_URL=https://viewer.what.ar
       - ENCRYPTION_SECRET=K+Bar660Ofaec7v1jHC25tAn3l2b7c81
-      - ADMIN_EMAIL=baptiste.arnaud95@gmail.com
+      - ADMIN_EMAIL=slarrauri@gmail.com
       - SMTP_HOST=mail
-      - NEXT_PUBLIC_SMTP_FROM=notifications@typebot.domain.com
+      - NEXT_PUBLIC_SMTP_FROM=notifications@builder.what.ar
       - S3_ACCESS_KEY=minio
       - S3_SECRET_KEY=minio123
       - S3_BUCKET=typebot
-      - S3_ENDPOINT=storage.domain.com
+      - S3_ENDPOINT=storage.what.ar
   typebot-viewer:
     labels:
-      virtual.host: 'bot.domain.com' # change to your domain
+      virtual.host: 'viewer.what.ar' # change to your domain
       virtual.port: '3000'
       virtual.tls-email: 'admin@example.com' # change to your email
     image: baptistearno/typebot-viewer:latest
@@ -42,20 +42,20 @@ services:
     # See https://docs.typebot.io/self-hosting/configuration for more configuration options
     environment:
       - DATABASE_URL=postgresql://postgres:typebot@typebot-db:5432/typebot
-      - NEXT_PUBLIC_VIEWER_URL=https://bot.domain.com
+      - NEXT_PUBLIC_VIEWER_URL=https://viewer.what.ar
       - ENCRYPTION_SECRET=K+Bar660Ofaec7v1jHC25tAn3l2b7c81
       - SMTP_HOST=mail
-      - NEXT_PUBLIC_SMTP_FROM=notifications@typebot.domain.com
+      - NEXT_PUBLIC_SMTP_FROM=notifications@builder.what.ar
       - S3_ACCESS_KEY=minio
       - S3_SECRET_KEY=minio123
       - S3_BUCKET=typebot
-      - S3_ENDPOINT=storage.domain.com
+      - S3_ENDPOINT=storage.what.ar
   mail:
     image: bytemark/smtp
     restart: always
   minio:
     labels:
-      virtual.host: 'storage.domain.com' # change to your domain
+      virtual.host: 'storage.what.ar' # change to your domain
       virtual.port: '9000'
       virtual.tls-email: 'admin@example.com' # change to your email
     image: minio/minio
@@ -83,5 +83,3 @@ services:
 volumes:
   db_data:
   s3_data:
-  caddy-certificates:
-    driver: local
