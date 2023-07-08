@@ -20,8 +20,10 @@ services:
     # See https://docs.typebot.io/self-hosting/configuration/builder for more configuration options
     environment:
       - DATABASE_URL=postgresql://postgres:typebot@typebot-db:5432/typebot
-      - NEXTAUTH_URL=localhost:8080
-      - NEXT_PUBLIC_VIEWER_URL=localhost:8080
+      - NEXTAUTH_URL=https://builder.what.ar
+      - NEXT_PUBLIC_VIEWER_URL=https://viewer.what.ar
+      - NEXTAUTH_URL_INTERNAL=http://localhost:3000
+      - DEFAULT_WORKSPACE_PLAN=UNLIMITED
       - ENCRYPTION_SECRET=${ENCRYPTION_SECRET}
       - ADMIN_EMAIL=${ADMIN_EMAIL}
       - GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID}
@@ -30,12 +32,12 @@ services:
     image: baptistearno/typebot-viewer:latest
     restart: always
     ports:
-      - '8081:3001'
+      - '8081:3000'
     # See https://docs.typebot.io/self-hosting/configuration/viewer for more configuration options
     environment:
       - DATABASE_URL=postgresql://postgres:typebot@typebot-db:5432/typebot
-      - NEXT_PUBLIC_VIEWER_URL=localhost:8081
+      - NEXTAUTH_URL=https://builder.what.ar
+      - NEXT_PUBLIC_VIEWER_URL=https://viewer.what.ar
       - ENCRYPTION_SECRET=${ENCRYPTION_SECRET}
-      - NEXTAUTH_URL=localhost:8081
 volumes:
   db_data:
