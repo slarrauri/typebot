@@ -6,8 +6,8 @@ services:
     volumes:
       - db_data:/var/lib/postgresql/data
     environment:
-      - POSTGRES_DB=typebot
-      - POSTGRES_PASSWORD=typebot
+      - POSTGRES_DB=${POSTGRES_DB}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
   typebot-builder:
     image: baptistearno/typebot-builder:latest
     restart: always
@@ -20,10 +20,12 @@ services:
     # See https://docs.typebot.io/self-hosting/configuration/builder for more configuration options
     environment:
       - DATABASE_URL=postgresql://postgres:typebot@typebot-db:5432/typebot
-      - NEXTAUTH_URL=<your-builder-url>
-      - NEXT_PUBLIC_VIEWER_URL=<your-viewer-url>
-      - ENCRYPTION_SECRET=<your-encryption-secret>
-      - ADMIN_EMAIL=<your-admin-email>
+      - NEXTAUTH_URL=localhost:8080
+      - NEXT_PUBLIC_VIEWER_URL=localhost:8080
+      - ENCRYPTION_SECRET=${ENCRYPTION_SECRET}
+      - ADMIN_EMAIL=${ADMIN_EMAIL}
+      - GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID}
+      - GOOGLE_CLIENT_SECRET=${GOOGLE_CLIENT_SECRET}
   typebot-viewer:
     image: baptistearno/typebot-viewer:latest
     restart: always
@@ -32,8 +34,8 @@ services:
     # See https://docs.typebot.io/self-hosting/configuration/viewer for more configuration options
     environment:
       - DATABASE_URL=postgresql://postgres:typebot@typebot-db:5432/typebot
-      - NEXT_PUBLIC_VIEWER_URL=<your-viewer-url>
-      - ENCRYPTION_SECRET=<your-encryption-secret>
-      - NEXTAUTH_URL=<your-builder-url>
+      - NEXT_PUBLIC_VIEWER_URL=localhost:8081
+      - ENCRYPTION_SECRET=${ENCRYPTION_SECRET}
+      - NEXTAUTH_URL=localhost:8081
 volumes:
   db_data:
