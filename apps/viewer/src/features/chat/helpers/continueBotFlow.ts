@@ -1,7 +1,4 @@
-import prisma from '@/lib/prisma'
 import { TRPCError } from '@trpc/server'
-import { Prisma } from '@typebot.io/prisma'
-import got from 'got'
 import {
   Block,
   BlockType,
@@ -15,8 +12,9 @@ import {
   SessionState,
   SetVariableBlock,
   WebhookBlock,
+  defaultPaymentInputOptions,
 } from '@typebot.io/schemas'
-import { isInputBlock, isNotDefined, byId } from '@typebot.io/lib'
+import { isInputBlock, byId } from '@typebot.io/lib'
 import { executeGroup } from './executeGroup'
 import { getNextGroup } from './getNextGroup'
 import { validateEmail } from '@/features/blocks/inputs/email/validateEmail'
@@ -28,12 +26,13 @@ import { parseVariables } from '@/features/variables/parseVariables'
 import { OpenAIBlock } from '@typebot.io/schemas/features/blocks/integrations/openai'
 import { resumeChatCompletion } from '@/features/blocks/integrations/openai/resumeChatCompletion'
 import { resumeWebhookExecution } from '@/features/blocks/integrations/webhook/resumeWebhookExecution'
+import { upsertAnswer } from '../queries/upsertAnswer'
 
 export const continueBotFlow =
   (state: SessionState) =>
   async (
     reply?: string
-  ): Promise<ChatReply & { newSessionState?: SessionState }> => {
+  ): Promise<ChatReply & { newSessionState: SessionState }> => {
     let newSessionState = { ...state }
     const group = state.typebot.groups.find(
       (group) => group.id === state.currentBlock?.groupId
@@ -60,13 +59,14 @@ export const continueBotFlow =
           ...existingVariable,
           value: reply,
         }
-        newSessionState = await updateVariables(state)([newVariable])
+        newSessionState = updateVariables(state)([newVariable])
       }
     } else if (reply && block.type === IntegrationBlockType.WEBHOOK) {
-      const result = await resumeWebhookExecution(
+      const result = resumeWebhookExecution({
         state,
-        block
-      )(JSON.parse(reply))
+        block,
+        response: JSON.parse(reply),
+      })
       if (result.newSessionState) newSessionState = result.newSessionState
     } else if (
       block.type === IntegrationBlockType.OPEN_AI &&
@@ -85,15 +85,16 @@ export const continueBotFlow =
         message: 'Current block is not an input block',
       })
 
-    let formattedReply = null
+    let formattedReply: string | undefined
 
     if (isInputBlock(block)) {
-      if (reply && !isReplyValid(reply, block)) return parseRetryMessage(block)
+      if (reply && !isReplyValid(reply, block))
+        return { ...parseRetryMessage(block), newSessionState }
 
       formattedReply = formatReply(reply, block.type)
 
       if (!formattedReply && !canSkip(block.type)) {
-        return parseRetryMessage(block)
+        return { ...parseRetryMessage(block), newSessionState }
       }
 
       const nextEdgeId = getOutgoingEdgeId(newSessionState)(
@@ -115,41 +116,63 @@ export const continueBotFlow =
     const nextEdgeId = getOutgoingEdgeId(newSessionState)(block, formattedReply)
 
     if (groupHasMoreBlocks && !nextEdgeId) {
-      return executeGroup(newSessionState)({
+      const chatReply = await executeGroup(newSessionState)({
         ...group,
         blocks: group.blocks.slice(blockIndex + 1),
       })
+      return {
+        ...chatReply,
+        lastMessageNewFormat:
+          formattedReply !== reply ? formattedReply : undefined,
+      }
     }
 
     if (!nextEdgeId && state.linkedTypebots.queue.length === 0)
-      return { messages: [] }
+      return {
+        messages: [],
+        newSessionState,
+        lastMessageNewFormat:
+          formattedReply !== reply ? formattedReply : undefined,
+      }
 
     const nextGroup = getNextGroup(newSessionState)(nextEdgeId)
 
-    if (!nextGroup) return { messages: [] }
+    if (!nextGroup)
+      return {
+        messages: [],
+        newSessionState,
+        lastMessageNewFormat:
+          formattedReply !== reply ? formattedReply : undefined,
+      }
 
-    return executeGroup(newSessionState)(nextGroup.group)
+    const chatReply = await executeGroup(newSessionState)(nextGroup.group)
+
+    return {
+      ...chatReply,
+      lastMessageNewFormat:
+        formattedReply !== reply ? formattedReply : undefined,
+    }
   }
 
 const processAndSaveAnswer =
   (state: SessionState, block: InputBlock, itemId?: string) =>
-  async (reply: string | null): Promise<SessionState> => {
+  async (reply: string | undefined): Promise<SessionState> => {
     if (!reply) return state
     let newState = await saveAnswer(state, block, itemId)(reply)
-    newState = await saveVariableValueIfAny(newState, block)(reply)
+    newState = saveVariableValueIfAny(newState, block)(reply)
     return newState
   }
 
 const saveVariableValueIfAny =
   (state: SessionState, block: InputBlock) =>
-  async (reply: string): Promise<SessionState> => {
+  (reply: string): SessionState => {
     if (!block.options.variableId) return state
     const foundVariable = state.typebot.variables.find(
       (variable) => variable.id === block.options.variableId
     )
     if (!foundVariable) return state
 
-    const newSessionState = await updateVariables(state)([
+    const newSessionState = updateVariables(state)([
       {
         ...foundVariable,
         value: Array.isArray(foundVariable.value)
@@ -161,20 +184,13 @@ const saveVariableValueIfAny =
     return newSessionState
   }
 
-export const setResultAsCompleted = async (resultId: string) => {
-  await prisma.result.update({
-    where: { id: resultId },
-    data: { isCompleted: true },
-  })
-}
-
 const parseRetryMessage = (
   block: InputBlock
 ): Pick<ChatReply, 'messages' | 'input'> => {
   const retryMessage =
     'retryMessageContent' in block.options && block.options.retryMessageContent
       ? block.options.retryMessageContent
-      : 'Invalid message. Please, try again.'
+      : parseDefaultRetryMessage(block)
   return {
     messages: [
       {
@@ -189,57 +205,39 @@ const parseRetryMessage = (
   }
 }
 
+const parseDefaultRetryMessage = (block: InputBlock): string => {
+  switch (block.type) {
+    case InputBlockType.PAYMENT:
+      return defaultPaymentInputOptions.retryMessageContent as string
+    default:
+      return 'Invalid message. Please, try again.'
+  }
+}
+
 const saveAnswer =
   (state: SessionState, block: InputBlock, itemId?: string) =>
   async (reply: string): Promise<SessionState> => {
-    const resultId = state.result?.id
-    const answer: Omit<Prisma.AnswerUncheckedCreateInput, 'resultId'> = {
-      blockId: block.id,
+    await upsertAnswer({
+      block,
+      answer: {
+        blockId: block.id,
+        itemId,
+        groupId: block.groupId,
+        content: reply,
+        variableId: block.options.variableId,
+        storageUsed: 0,
+      },
+      reply,
+      state,
       itemId,
-      groupId: block.groupId,
-      content: reply,
-      variableId: block.options.variableId,
-      storageUsed: 0,
-    }
-    if (state.result.answers.length === 0 && resultId)
-      await setResultAsStarted(resultId)
+    })
 
-    const newSessionState = setNewAnswerInState(state)({
+    return setNewAnswerInState(state)({
       blockId: block.id,
       variableId: block.options.variableId ?? null,
       content: reply,
     })
-
-    if (resultId) {
-      if (reply.includes('http') && block.type === InputBlockType.FILE) {
-        answer.storageUsed = await computeStorageUsed(reply)
-      }
-      await prisma.answer.upsert({
-        where: {
-          resultId_blockId_groupId: {
-            resultId,
-            blockId: block.id,
-            groupId: block.groupId,
-          },
-        },
-        create: { ...answer, resultId },
-        update: {
-          content: answer.content,
-          storageUsed: answer.storageUsed,
-          itemId: answer.itemId,
-        },
-      })
-    }
-
-    return newSessionState
   }
-
-const setResultAsStarted = async (resultId: string) => {
-  await prisma.result.update({
-    where: { id: resultId },
-    data: { hasStarted: true },
-  })
-}
 
 const setNewAnswerInState =
   (state: SessionState) => (newAnswer: ResultInSession['answers'][number]) => {
@@ -256,26 +254,11 @@ const setNewAnswerInState =
     } satisfies SessionState
   }
 
-const computeStorageUsed = async (reply: string) => {
-  let storageUsed = 0
-  const fileUrls = reply.split(', ')
-  const hasReachedStorageLimit = fileUrls[0] === null
-  if (!hasReachedStorageLimit) {
-    for (const url of fileUrls) {
-      const { headers } = await got(url)
-      const size = headers['content-length']
-      if (isNotDefined(size)) continue
-      storageUsed += parseInt(size, 10)
-    }
-  }
-  return storageUsed
-}
-
 const getOutgoingEdgeId =
   ({ typebot: { variables } }: Pick<SessionState, 'typebot'>) =>
   (
     block: InputBlock | SetVariableBlock | OpenAIBlock | WebhookBlock,
-    reply: string | null
+    reply: string | undefined
   ) => {
     if (
       block.type === InputBlockType.CHOICE &&
@@ -283,7 +266,9 @@ const getOutgoingEdgeId =
       reply
     ) {
       const matchedItem = block.items.find(
-        (item) => parseVariables(variables)(item.content) === reply
+        (item) =>
+          parseVariables(variables)(item.content).normalize() ===
+          reply.normalize()
       )
       if (matchedItem?.outgoingEdgeId) return matchedItem.outgoingEdgeId
     }
@@ -293,7 +278,9 @@ const getOutgoingEdgeId =
       reply
     ) {
       const matchedItem = block.items.find(
-        (item) => parseVariables(variables)(item.title) === reply
+        (item) =>
+          parseVariables(variables)(item.title).normalize() ===
+          reply.normalize()
       )
       if (matchedItem?.outgoingEdgeId) return matchedItem.outgoingEdgeId
     }
@@ -303,8 +290,8 @@ const getOutgoingEdgeId =
 export const formatReply = (
   inputValue: string | undefined,
   blockType: BlockType
-): string | null => {
-  if (!inputValue) return null
+): string | undefined => {
+  if (!inputValue) return
   switch (blockType) {
     case InputBlockType.PHONE:
       return formatPhoneNumber(inputValue)
@@ -320,6 +307,8 @@ export const isReplyValid = (inputValue: string, block: Block): boolean => {
       return validatePhoneNumber(inputValue)
     case InputBlockType.URL:
       return validateUrl(inputValue)
+    case InputBlockType.PAYMENT:
+      return inputValue !== 'fail'
   }
   return true
 }

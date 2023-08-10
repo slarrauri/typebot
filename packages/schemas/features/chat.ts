@@ -1,5 +1,6 @@
 import { z } from 'zod'
 import {
+  executableWebhookSchema,
   googleAnalyticsOptionsSchema,
   paymentInputRuntimeOptionsSchema,
   pixelOptionsSchema,
@@ -19,7 +20,6 @@ import { answerSchema } from './answer'
 import { BubbleBlockType } from './blocks/bubbles/enums'
 import { inputBlockSchemas } from './blocks/schemas'
 import { chatCompletionMessageSchema } from './blocks/integrations/openai'
-import { executableWebhookSchema } from './webhooks'
 
 const typebotInSessionStateSchema = publicTypebotSchema.pick({
   id: true,
@@ -150,7 +150,7 @@ const startParamsSchema = z.object({
     .boolean()
     .optional()
     .describe(
-      "If set to `true`, it will start a Preview session with the unpublished bot and it won't be saved in the Results tab. You need to be authenticated for this to work."
+      "If set to `true`, it will start a Preview session with the unpublished bot and it won't be saved in the Results tab. You need to be authenticated with a bearer token for this to work."
     ),
   resultId: z
     .string()
@@ -166,7 +166,12 @@ const startParamsSchema = z.object({
     .describe(
       '[More info about prefilled variables.](https://docs.typebot.io/editor/variables#prefilled-variables)'
     ),
-  isStreamEnabled: z.boolean().optional(),
+  isStreamEnabled: z
+    .boolean()
+    .optional()
+    .describe(
+      'Set this to `true` if you intend to stream OpenAI completions on a client.'
+    ),
 })
 
 const replyLogSchema = logSchema
@@ -189,11 +194,11 @@ export const sendMessageInputSchema = z.object({
     .describe(
       'Session ID that you get from the initial chat request to a bot. If not provided, it will create a new session.'
     ),
+  startParams: startParamsSchema.optional(),
   clientLogs: z
     .array(replyLogSchema)
     .optional()
     .describe('Logs while executing client side actions'),
-  startParams: startParamsSchema.optional(),
 })
 
 const runtimeOptionsSchema = paymentInputRuntimeOptionsSchema.optional()
@@ -247,6 +252,7 @@ const clientSideActionSchema = z
             messages: z.array(
               chatCompletionMessageSchema.pick({ content: true, role: true })
             ),
+            displayStream: z.boolean().optional(),
           }),
         })
       )
@@ -286,6 +292,12 @@ export const chatReplySchema = z.object({
   resultId: z.string().optional(),
   dynamicTheme: dynamicThemeSchema.optional(),
   logs: z.array(replyLogSchema).optional(),
+  lastMessageNewFormat: z
+    .string()
+    .optional()
+    .describe(
+      'The sent message is validated and formatted on the backend. This is set only if the message differs from the formatted version.'
+    ),
 })
 
 export type ChatSession = z.infer<typeof chatSessionSchema>

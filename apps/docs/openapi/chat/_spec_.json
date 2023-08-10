@@ -15,11 +15,6 @@
         "operationId": "sendMessage",
         "summary": "Send a message",
         "description": "To initiate a chat, do not provide a `sessionId` nor a `message`.\n\nContinue the conversation by providing the `sessionId` and the `message` that should answer the previous question.\n\nSet the `isPreview` option to `true` to chat with the non-published version of the typebot.",
-        "security": [
-          {
-            "Authorization": []
-          }
-        ],
         "requestBody": {
           "required": true,
           "content": {
@@ -34,27 +29,6 @@
                   "sessionId": {
                     "type": "string",
                     "description": "Session ID that you get from the initial chat request to a bot. If not provided, it will create a new session."
-                  },
-                  "clientLogs": {
-                    "type": "array",
-                    "items": {
-                      "type": "object",
-                      "properties": {
-                        "status": {
-                          "type": "string"
-                        },
-                        "description": {
-                          "type": "string"
-                        },
-                        "details": {}
-                      },
-                      "required": [
-                        "status",
-                        "description"
-                      ],
-                      "additionalProperties": false
-                    },
-                    "description": "Logs while executing client side actions"
                   },
                   "startParams": {
                     "type": "object",
@@ -338,6 +312,9 @@
                                                 "properties": {
                                                   "url": {
                                                     "type": "string"
+                                                  },
+                                                  "isAutoplayEnabled": {
+                                                    "type": "boolean"
                                                   }
                                                 },
                                                 "additionalProperties": false
@@ -490,7 +467,9 @@
                                                                       "Is set",
                                                                       "Is empty",
                                                                       "Starts with",
-                                                                      "Ends with"
+                                                                      "Ends with",
+                                                                      "Matches regex",
+                                                                      "Does not match regex"
                                                                     ]
                                                                   },
                                                                   "value": {
@@ -981,6 +960,9 @@
                                                   },
                                                   "amount": {
                                                     "type": "string"
+                                                  },
+                                                  "retryMessageContent": {
+                                                    "type": "string"
                                                   }
                                                 },
                                                 "required": [
@@ -1253,7 +1235,9 @@
                                                                       "Is set",
                                                                       "Is empty",
                                                                       "Starts with",
-                                                                      "Ends with"
+                                                                      "Ends with",
+                                                                      "Matches regex",
+                                                                      "Does not match regex"
                                                                     ]
                                                                   },
                                                                   "value": {
@@ -1454,7 +1438,9 @@
                                                                   "Is set",
                                                                   "Is empty",
                                                                   "Starts with",
-                                                                  "Ends with"
+                                                                  "Ends with",
+                                                                  "Matches regex",
+                                                                  "Does not match regex"
                                                                 ]
                                                               },
                                                               "value": {
@@ -1571,6 +1557,7 @@
                                                       "Custom",
                                                       "Empty",
                                                       "User ID",
+                                                      "Now",
                                                       "Today",
                                                       "Yesterday",
                                                       "Tomorrow",
@@ -2048,7 +2035,9 @@
                                                                     "Is set",
                                                                     "Is empty",
                                                                     "Starts with",
-                                                                    "Ends with"
+                                                                    "Ends with",
+                                                                    "Matches regex",
+                                                                    "Does not match regex"
                                                                   ]
                                                                 },
                                                                 "value": {
@@ -2244,7 +2233,9 @@
                                                                     "Is set",
                                                                     "Is empty",
                                                                     "Starts with",
-                                                                    "Ends with"
+                                                                    "Ends with",
+                                                                    "Matches regex",
+                                                                    "Does not match regex"
                                                                   ]
                                                                 },
                                                                 "value": {
@@ -2378,6 +2369,83 @@
                                                   },
                                                   "isExecutedOnClient": {
                                                     "type": "boolean"
+                                                  },
+                                                  "webhook": {
+                                                    "type": "object",
+                                                    "properties": {
+                                                      "id": {
+                                                        "type": "string"
+                                                      },
+                                                      "queryParams": {
+                                                        "type": "array",
+                                                        "items": {
+                                                          "type": "object",
+                                                          "properties": {
+                                                            "id": {
+                                                              "type": "string"
+                                                            },
+                                                            "key": {
+                                                              "type": "string"
+                                                            },
+                                                            "value": {
+                                                              "type": "string"
+                                                            }
+                                                          },
+                                                          "required": [
+                                                            "id"
+                                                          ],
+                                                          "additionalProperties": false
+                                                        }
+                                                      },
+                                                      "headers": {
+                                                        "type": "array",
+                                                        "items": {
+                                                          "type": "object",
+                                                          "properties": {
+                                                            "id": {
+                                                              "type": "string"
+                                                            },
+                                                            "key": {
+                                                              "type": "string"
+                                                            },
+                                                            "value": {
+                                                              "type": "string"
+                                                            }
+                                                          },
+                                                          "required": [
+                                                            "id"
+                                                          ],
+                                                          "additionalProperties": false
+                                                        }
+                                                      },
+                                                      "method": {
+                                                        "type": "string",
+                                                        "enum": [
+                                                          "POST",
+                                                          "GET",
+                                                          "PUT",
+                                                          "DELETE",
+                                                          "PATCH",
+                                                          "HEAD",
+                                                          "CONNECT",
+                                                          "OPTIONS",
+                                                          "TRACE"
+                                                        ]
+                                                      },
+                                                      "url": {
+                                                        "type": "string"
+                                                      },
+                                                      "body": {
+                                                        "type": "string"
+                                                      }
+                                                    },
+                                                    "required": [
+                                                      "id",
+                                                      "queryParams",
+                                                      "headers",
+                                                      "method"
+                                                    ],
+                                                    "additionalProperties": false
                                                   }
                                                 },
                                                 "required": [
@@ -2387,15 +2455,15 @@
                                                 "additionalProperties": false
                                               },
                                               "webhookId": {
-                                                "type": "string"
+                                                "type": "string",
+                                                "description": "Deprecated, use webhook.id instead"
                                               }
                                             },
                                             "required": [
                                               "id",
                                               "groupId",
                                               "type",
-                                              "options",
-                                              "webhookId"
+                                              "options"
                                             ],
                                             "additionalProperties": false
                                           },
@@ -2716,6 +2784,83 @@
                                                   },
                                                   "isExecutedOnClient": {
                                                     "type": "boolean"
+                                                  },
+                                                  "webhook": {
+                                                    "type": "object",
+                                                    "properties": {
+                                                      "id": {
+                                                        "type": "string"
+                                                      },
+                                                      "queryParams": {
+                                                        "type": "array",
+                                                        "items": {
+                                                          "type": "object",
+                                                          "properties": {
+                                                            "id": {
+                                                              "type": "string"
+                                                            },
+                                                            "key": {
+                                                              "type": "string"
+                                                            },
+                                                            "value": {
+                                                              "type": "string"
+                                                            }
+                                                          },
+                                                          "required": [
+                                                            "id"
+                                                          ],
+                                                          "additionalProperties": false
+                                                        }
+                                                      },
+                                                      "headers": {
+                                                        "type": "array",
+                                                        "items": {
+                                                          "type": "object",
+                                                          "properties": {
+                                                            "id": {
+                                                              "type": "string"
+                                                            },
+                                                            "key": {
+                                                              "type": "string"
+                                                            },
+                                                            "value": {
+                                                              "type": "string"
+                                                            }
+                                                          },
+                                                          "required": [
+                                                            "id"
+                                                          ],
+                                                          "additionalProperties": false
+                                                        }
+                                                      },
+                                                      "method": {
+                                                        "type": "string",
+                                                        "enum": [
+                                                          "POST",
+                                                          "GET",
+                                                          "PUT",
+                                                          "DELETE",
+                                                          "PATCH",
+                                                          "HEAD",
+                                                          "CONNECT",
+                                                          "OPTIONS",
+                                                          "TRACE"
+                                                        ]
+                                                      },
+                                                      "url": {
+                                                        "type": "string"
+                                                      },
+                                                      "body": {
+                                                        "type": "string"
+                                                      }
+                                                    },
+                                                    "required": [
+                                                      "id",
+                                                      "queryParams",
+                                                      "headers",
+                                                      "method"
+                                                    ],
+                                                    "additionalProperties": false
                                                   }
                                                 },
                                                 "required": [
@@ -2725,15 +2870,15 @@
                                                 "additionalProperties": false
                                               },
                                               "webhookId": {
-                                                "type": "string"
+                                                "type": "string",
+                                                "description": "Deprecated, use webhook.id instead"
                                               }
                                             },
                                             "required": [
                                               "id",
                                               "groupId",
                                               "type",
-                                              "options",
-                                              "webhookId"
+                                              "options"
                                             ],
                                             "additionalProperties": false
                                           },
@@ -2884,6 +3029,83 @@
                                                   },
                                                   "isExecutedOnClient": {
                                                     "type": "boolean"
+                                                  },
+                                                  "webhook": {
+                                                    "type": "object",
+                                                    "properties": {
+                                                      "id": {
+                                                        "type": "string"
+                                                      },
+                                                      "queryParams": {
+                                                        "type": "array",
+                                                        "items": {
+                                                          "type": "object",
+                                                          "properties": {
+                                                            "id": {
+                                                              "type": "string"
+                                                            },
+                                                            "key": {
+                                                              "type": "string"
+                                                            },
+                                                            "value": {
+                                                              "type": "string"
+                                                            }
+                                                          },
+                                                          "required": [
+                                                            "id"
+                                                          ],
+                                                          "additionalProperties": false
+                                                        }
+                                                      },
+                                                      "headers": {
+                                                        "type": "array",
+                                                        "items": {
+                                                          "type": "object",
+                                                          "properties": {
+                                                            "id": {
+                                                              "type": "string"
+                                                            },
+                                                            "key": {
+                                                              "type": "string"
+                                                            },
+                                                            "value": {
+                                                              "type": "string"
+                                                            }
+                                                          },
+                                                          "required": [
+                                                            "id"
+                                                          ],
+                                                          "additionalProperties": false
+                                                        }
+                                                      },
+                                                      "method": {
+                                                        "type": "string",
+                                                        "enum": [
+                                                          "POST",
+                                                          "GET",
+                                                          "PUT",
+                                                          "DELETE",
+                                                          "PATCH",
+                                                          "HEAD",
+                                                          "CONNECT",
+                                                          "OPTIONS",
+                                                          "TRACE"
+                                                        ]
+                                                      },
+                                                      "url": {
+                                                        "type": "string"
+                                                      },
+                                                      "body": {
+                                                        "type": "string"
+                                                      }
+                                                    },
+                                                    "required": [
+                                                      "id",
+                                                      "queryParams",
+                                                      "headers",
+                                                      "method"
+                                                    ],
+                                                    "additionalProperties": false
                                                   }
                                                 },
                                                 "required": [
@@ -2893,15 +3115,15 @@
                                                 "additionalProperties": false
                                               },
                                               "webhookId": {
-                                                "type": "string"
+                                                "type": "string",
+                                                "description": "Deprecated, now integrated in webhook block options"
                                               }
                                             },
                                             "required": [
                                               "id",
                                               "groupId",
                                               "type",
-                                              "options",
-                                              "webhookId"
+                                              "options"
                                             ],
                                             "additionalProperties": false
                                           },
@@ -2976,6 +3198,83 @@
                                                   },
                                                   "isExecutedOnClient": {
                                                     "type": "boolean"
+                                                  },
+                                                  "webhook": {
+                                                    "type": "object",
+                                                    "properties": {
+                                                      "id": {
+                                                        "type": "string"
+                                                      },
+                                                      "queryParams": {
+                                                        "type": "array",
+                                                        "items": {
+                                                          "type": "object",
+                                                          "properties": {
+                                                            "id": {
+                                                              "type": "string"
+                                                            },
+                                                            "key": {
+                                                              "type": "string"
+                                                            },
+                                                            "value": {
+                                                              "type": "string"
+                                                            }
+                                                          },
+                                                          "required": [
+                                                            "id"
+                                                          ],
+                                                          "additionalProperties": false
+                                                        }
+                                                      },
+                                                      "headers": {
+                                                        "type": "array",
+                                                        "items": {
+                                                          "type": "object",
+                                                          "properties": {
+                                                            "id": {
+                                                              "type": "string"
+                                                            },
+                                                            "key": {
+                                                              "type": "string"
+                                                            },
+                                                            "value": {
+                                                              "type": "string"
+                                                            }
+                                                          },
+                                                          "required": [
+                                                            "id"
+                                                          ],
+                                                          "additionalProperties": false
+                                                        }
+                                                      },
+                                                      "method": {
+                                                        "type": "string",
+                                                        "enum": [
+                                                          "POST",
+                                                          "GET",
+                                                          "PUT",
+                                                          "DELETE",
+                                                          "PATCH",
+                                                          "HEAD",
+                                                          "CONNECT",
+                                                          "OPTIONS",
+                                                          "TRACE"
+                                                        ]
+                                                      },
+                                                      "url": {
+                                                        "type": "string"
+                                                      },
+                                                      "body": {
+                                                        "type": "string"
+                                                      }
+                                                    },
+                                                    "required": [
+                                                      "id",
+                                                      "queryParams",
+                                                      "headers",
+                                                      "method"
+                                                    ],
+                                                    "additionalProperties": false
                                                   }
                                                 },
                                                 "required": [
@@ -2985,15 +3284,15 @@
                                                 "additionalProperties": false
                                               },
                                               "webhookId": {
-                                                "type": "string"
+                                                "type": "string",
+                                                "description": "Deprecated, use webhook.id instead"
                                               }
                                             },
                                             "required": [
                                               "id",
                                               "groupId",
                                               "type",
-                                              "options",
-                                              "webhookId"
+                                              "options"
                                             ],
                                             "additionalProperties": false
                                           },
@@ -3537,7 +3836,7 @@
                       },
                       "isPreview": {
                         "type": "boolean",
-                        "description": "If set to `true`, it will start a Preview session with the unpublished bot and it won't be saved in the Results tab. You need to be authenticated for this to work."
+                        "description": "If set to `true`, it will start a Preview session with the unpublished bot and it won't be saved in the Results tab. You need to be authenticated with a bearer token for this to work."
                       },
                       "resultId": {
                         "type": "string",
@@ -3553,13 +3852,35 @@
                         "description": "[More info about prefilled variables.](https://docs.typebot.io/editor/variables#prefilled-variables)"
                       },
                       "isStreamEnabled": {
-                        "type": "boolean"
+                        "type": "boolean",
+                        "description": "Set this to `true` if you intend to stream OpenAI completions on a client."
                       }
                     },
                     "required": [
                       "typebot"
                     ],
                     "additionalProperties": false
+                  },
+                  "clientLogs": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "status": {
+                          "type": "string"
+                        },
+                        "description": {
+                          "type": "string"
+                        },
+                        "details": {}
+                      },
+                      "required": [
+                        "status",
+                        "description"
+                      ],
+                      "additionalProperties": false
+                    },
+                    "description": "Logs while executing client side actions"
                   }
                 },
                 "additionalProperties": false
@@ -3714,6 +4035,9 @@
                                     "properties": {
                                       "url": {
                                         "type": "string"
+                                      },
+                                      "isAutoplayEnabled": {
+                                        "type": "boolean"
                                       }
                                     },
                                     "additionalProperties": false
@@ -3901,7 +4225,9 @@
                                                         "Is set",
                                                         "Is empty",
                                                         "Starts with",
-                                                        "Ends with"
+                                                        "Ends with",
+                                                        "Matches regex",
+                                                        "Does not match regex"
                                                       ]
                                                     },
                                                     "value": {
@@ -4392,6 +4718,9 @@
                                     },
                                     "amount": {
                                       "type": "string"
+                                    },
+                                    "retryMessageContent": {
+                                      "type": "string"
                                     }
                                   },
                                   "required": [
@@ -4664,7 +4993,9 @@
                                                         "Is set",
                                                         "Is empty",
                                                         "Starts with",
-                                                        "Ends with"
+                                                        "Ends with",
+                                                        "Matches regex",
+                                                        "Does not match regex"
                                                       ]
                                                     },
                                                     "value": {
@@ -5145,6 +5476,9 @@
                                                       },
                                                       "additionalProperties": false
                                                     }
+                                                  },
+                                                  "displayStream": {
+                                                    "type": "boolean"
                                                   }
                                                 },
                                                 "required": [
@@ -5694,6 +6028,10 @@
                         ],
                         "additionalProperties": false
                       }
+                    },
+                    "lastMessageNewFormat": {
+                      "type": "string",
+                      "description": "The sent message is validated and formatted on the backend. This is set only if the message differs from the formatted version."
                     }
                   },
                   "required": [
@@ -5777,6 +6115,55 @@
                   "required": [
                     "presignedUrl",
                     "hasReachedStorageLimit"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "default": {
+            "$ref": "#/components/responses/error"
+          }
+        }
+      }
+    },
+    "/sessions/{sessionId}/updateTypebot": {
+      "post": {
+        "operationId": "updateTypebotInSession",
+        "summary": "Update typebot in session",
+        "description": "Update chat session with latest typebot modifications. This is useful when you want to update the typebot in an ongoing session after making changes to it.",
+        "security": [
+          {
+            "Authorization": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "sessionId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "enum": [
+                        "success"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "message"
                   ],
                   "additionalProperties": false
                 }

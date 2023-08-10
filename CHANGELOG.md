@@ -1,5 +1,113 @@
 # Changelog
 
+<a name="2.16.0"></a>
+## 2.16.0 (2023-08-01)
+
+### Added
+
+- ✨ Stream bubble content if placed right after Op… [[3952ae2](https://github.com/baptisteArno/typebot.io/commit/3952ae2755ac2806055072d5cfa4cd32a01693f6)]
+
+### Changed
+
+- 💄 Improve multiple choice color when image background [[ee067ce](https://github.com/baptisteArno/typebot.io/commit/ee067ceee1011d946061e9d44abcf789f1000388)]
+- ⚡ (condition) Add regex comparison item [[aa9f5bc](https://github.com/baptisteArno/typebot.io/commit/aa9f5bc7322e85e625852d71a5623c16cf485420)]
+- 💄 (embed) Improve avatar alignment and audio auto load [[14c3d95](https://github.com/baptisteArno/typebot.io/commit/14c3d95b8aae8897932fc1e7969c2eefe175e33c)]
+- ⚡ (video) Detect youtu.be URLs for video bubbles [[e34b939](https://github.com/baptisteArno/typebot.io/commit/e34b939786dd01aa912835b4c23c747051ba28db)]
+- ⚡ (paymentInput) Handle Stripe redirection [[c99298e](https://github.com/baptisteArno/typebot.io/commit/c99298e49b8dc722f7259703f22cef8dc99a919f)]
+- 🔧 Add import contact to brevo script [[c124671](https://github.com/baptisteArno/typebot.io/commit/c124671682930fca9bbaace5a007ea0aaba32f15)]
+- 💄 Fix round icons color in dark mode [[4607f0e](https://github.com/baptisteArno/typebot.io/commit/4607f0ea39fd3c35ab839c902a15f6c90ed6cc8f)]
+- 🚸 New dedicated onboarding page [[43555c1](https://github.com/baptisteArno/typebot.io/commit/43555c171ea48181e67defa0fa9cc5b3e22d0fea)]
+- 🚸 Update onboarding bot [[283c55c](https://github.com/baptisteArno/typebot.io/commit/283c55c1a406320d2cbefb50c70ab92440f3d401)]
+- ⚡ (embed) Add customizable bubble close icon [[c8bc659](https://github.com/baptisteArno/typebot.io/commit/c8bc659941ff9583299397baee33dadb5f6a2618)]
+- ⚡ Replace Google fonts with Bunny fonts [[cccf905](https://github.com/baptisteArno/typebot.io/commit/cccf905d38204c466e3ae6476152a2f266ca4e06)]
+- ⚡ (video) Add youtube shorts auto parsing [[1ebd528](https://github.com/baptisteArno/typebot.io/commit/1ebd528753909282adf4c15476a7ed3f4c822b76)]
+- ⚡ Regroup database queries of /sendMessage in one place [[aa4c16d](https://github.com/baptisteArno/typebot.io/commit/aa4c16dad78e7e4dcd9b78f9b4916fd416da3c5f)]
+- ⬆️ Upgrade giphy package [[1095cf7](https://github.com/baptisteArno/typebot.io/commit/1095cf7f0908da2660341471ab6cd9442bb8dfd3)]
+
+### Fixed
+
+- 🐛 (embed) Fix custom close icon placement in bubble button [[81c2e50](https://github.com/baptisteArno/typebot.io/commit/81c2e5022bec0e0a5cee75ac58a7dbe2b1e14939)]
+- 🐛 Fix TextBubble &#x27;Edit Link&#x27; background color in dark mode ([#653](https://github.com/baptisteArno/typebot.io/issues/653)) [[f8af76d](https://github.com/baptisteArno/typebot.io/commit/f8af76d34799f4e26de53efee4781f703d782c34)]
+- 🐛 (analytics) Fix analytics drop-off rate not computing correctly [[3df81a3](https://github.com/baptisteArno/typebot.io/commit/3df81a3cb9b9f158d940b01d02bf6f2cbedf6f0c)]
+- 🐛 (embed) Remove at functions for better compability [[320cffc](https://github.com/baptisteArno/typebot.io/commit/320cffc42001399e2a646243ba9d6ab632a6f9e8)]
+- 🐛 (analytics) Fix previous total computation max call stack exceeded [[7a7d471](https://github.com/baptisteArno/typebot.io/commit/7a7d4718051209ba70b6f2e2d23f4945426988fd)]
+- 🐛 Fix table list when empty always show &quot;add&quot; button [[b171b39](https://github.com/baptisteArno/typebot.io/commit/b171b3960640382706ccb75f71015aac60ed3da1)]
+- 🐛 (sendMessage) Return updated session in all cases [[7942ae4](https://github.com/baptisteArno/typebot.io/commit/7942ae4751703ef0599366f257a690bae9d15818)]
+- 🐛 Fix bunny fonts URL path [[defe001](https://github.com/baptisteArno/typebot.io/commit/defe00155d2977cc26ac3291f6375978723865da)]
+- 🐛 Add setInputValue to Typebot embed object [[6c54065](https://github.com/baptisteArno/typebot.io/commit/6c540657a610ec27bf4be6ded09db0b610c48724)]
+- 🐛 Fix first-time pnpm dev [[b99b58b](https://github.com/baptisteArno/typebot.io/commit/b99b58bdfe032755da249e076eff1eb29256bb72)]
+- 🐛 Fix viewer&#x27;s &#x60;.env.local.example&#x60; inline comment [[13ac469](https://github.com/baptisteArno/typebot.io/commit/13ac46975d12d8c3aac3a053ea7f612988c9b90f)]
+
+### Security
+
+- 🔒 (auth) Block disposable emails during sign up [[abc3abd](https://github.com/baptisteArno/typebot.io/commit/abc3abd86b4f970e102c1b0c5d5d5d610975f45a)]
+
+### Miscellaneous
+
+- 📝 (openai) Add troobleshoot guide for empty message issue [[482462f](https://github.com/baptisteArno/typebot.io/commit/482462f2b10f69903754d53dccf41588cca3f701)]
+- 📝 Add a guide on how to create a new block in CONTRIBUTING [[e499478](https://github.com/baptisteArno/typebot.io/commit/e499478deed7b1ac2c6c215c8e472133e28b37ab)]
+- 📦 Release WP plugin 3.2.0 [[5dc01db](https://github.com/baptisteArno/typebot.io/commit/5dc01db08201a5637d06212c1271b96fa8c23890)]
+- 📝 Remove old stripe env var [[b17177f](https://github.com/baptisteArno/typebot.io/commit/b17177f35f97ab679723a3dbade745f474367e53)]
+- 📝 Add &quot;conditionally display button&quot; video in docs [[0c923b7](https://github.com/baptisteArno/typebot.io/commit/0c923b70a60851fb3e840820b9dc5d4714adfcb3)]
+- 📝 Update README ([#632](https://github.com/baptisteArno/typebot.io/issues/632)) [[9433d3e](https://github.com/baptisteArno/typebot.io/commit/9433d3ea8f9231613d1a5a3efa3576d4e7c16b23)]
+- 🧑‍💻 (docs) Add &quot;Edit this page&quot; links in docs [[04faa3e](https://github.com/baptisteArno/typebot.io/commit/04faa3e847f856e1e4099ccfc850be831be4513a)]
+- 🧑‍💻 (results) Add get result by id API endpoint [[3283d7e](https://github.com/baptisteArno/typebot.io/commit/3283d7e26146253ae129395afdeaa4fc2bf1d84e)]
+-  Support specifying custom OAuth scope ([#619](https://github.com/baptisteArno/typebot.io/issues/619)) [[48f074c](https://github.com/baptisteArno/typebot.io/commit/48f074cdf7edf0558c0d937e855f92aba1fabbed)]
+- 📝 Add clarification for forks commercialization [[22c1e2e](https://github.com/baptisteArno/typebot.io/commit/22c1e2e6cf8592e22a682dd53fb5c06e48637991)]
+- 🧑‍💻 Exit prisma command if database url starts with &quot;postgres://&quot; [[0ea30bc](https://github.com/baptisteArno/typebot.io/commit/0ea30bc49b2979a21ceea2edfd77d8d4ea1811f5)]
+
+
+<a name="2.15.2"></a>
+## 2.15.2 (2023-07-17)
+
+### Added
+
+- ✨ (embed) Add new command setInputValue [[be7be7b](https://github.com/baptisteArno/typebot.io/commit/be7be7bf7a47baeeee0b597e34790ddf289035cc)]
+- ✨ Add Next.js embed library [[e293cb0](https://github.com/baptisteArno/typebot.io/commit/e293cb011174aa170ee136c8a1b476bfc98e797c)]
+- 👷‍♂️ Improve monthly clean database script [[455c3bd](https://github.com/baptisteArno/typebot.io/commit/455c3bdfd700553831d39fe578c5ad913f0397cc)]
+
+### Changed
+
+- 🗃️ Remove extendedWhereUnique feat [[2c2952e](https://github.com/baptisteArno/typebot.io/commit/2c2952e3649713007b9d4edf3846f10a88c87f4b)]
+- ⚡ Replace updates with updateManys when possible [[3426d66](https://github.com/baptisteArno/typebot.io/commit/3426d6689d03ea68116f893c9343c0a1a43e1595)]
+- ♿ Remove invalid js in meta head code [[521cb50](https://github.com/baptisteArno/typebot.io/commit/521cb50782b7b1141dcf4ae133c686c8d3533c27)]
+- ⏪ Downgrade next package version [[d3fb31b](https://github.com/baptisteArno/typebot.io/commit/d3fb31b43a2317a3f3d4aaf9a6748f446c0023ec)]
+- ⬆️ Upgrade dependencies [[81bc074](https://github.com/baptisteArno/typebot.io/commit/81bc0746cf81840e9a92ac00b748ac44c9889128)]
+- 🚸 (billing) Set existing stripe customer for custom plan checkout [[de08179](https://github.com/baptisteArno/typebot.io/commit/de08179f8bbf291d79a7df3c701d3913f6cb73ca)]
+- ⚡ (audio) Implement more robust auto play [[0a85f33](https://github.com/baptisteArno/typebot.io/commit/0a85f33694300fe62a48bd5925ab6f66060796e4)]
+- ⏪ Revert onCanPlay callback [[d6c6434](https://github.com/baptisteArno/typebot.io/commit/d6c64340501d07f9388a5afd7226548f159e9413)]
+- ⬆️ Upgrade OpenAI stream deps [[5644a0c](https://github.com/baptisteArno/typebot.io/commit/5644a0c8e0e6557aaf2d0a8bcbbff59813f193cd)]
+- ⚡ (settings) Parse custom head code to remove invalid text nodes [[174d50a](https://github.com/baptisteArno/typebot.io/commit/174d50ad1b630dcad43d91b42bfef4cf6986468f)]
+- 🔧 Rewrite viewer to landing-page [[0465275](https://github.com/baptisteArno/typebot.io/commit/0465275f822d863a29b0d3d7c58b2a787686bdd9)]
+- 🚸 (theme) Move isBrandingEnable param in the Theme tab [[a31345a](https://github.com/baptisteArno/typebot.io/commit/a31345ae26650c2c599796f41f3a9fb4292bd8b6)]
+
+### Fixed
+
+- 🐛 (pixel) Fix event tracking [[7d62c7a](https://github.com/baptisteArno/typebot.io/commit/7d62c7ac850a2547f813d23e37475b72ce57535d)]
+- 🐛 (bot) Improve canPlay issue fixin [[0b4b15c](https://github.com/baptisteArno/typebot.io/commit/0b4b15ce0a3e59209389af847a999c363d66b234)]
+- 🐛 (bot) Fix setTimeout onCanPlay concurrency issues [[082084a](https://github.com/baptisteArno/typebot.io/commit/082084a90cdebfb911367a769650acedf69a58c5)]
+- 🐛 (bot) Fix double callback on video and audio bubble [[abb363b](https://github.com/baptisteArno/typebot.io/commit/abb363b59da266c36126ef29c7fe0f4b16132b92)]
+- 🐛 (openai) Fix incompatible OpenAI types [[6565fcc](https://github.com/baptisteArno/typebot.io/commit/6565fcc29c7a88f0dd6e6c30a7ece7cfe16024c8)]
+- 🐛 (bot) Fix audio and video autoplay when loading take some time [[ba3a2b7](https://github.com/baptisteArno/typebot.io/commit/ba3a2b711e45050b679c2fed1c2c520cbd59aec1)]
+- 🚑 Fix invalid rewrites for custom domains [[37bb172](https://github.com/baptisteArno/typebot.io/commit/37bb172f251019f0ea1ddd7c2c9d5e7383f7b7ef)]
+- 🚑 (lp) Hard-code rewrite to typebot.io [[b2a9734](https://github.com/baptisteArno/typebot.io/commit/b2a973472f09133b8381ea39437dae27ae770181)]
+- 🐛 (workspace) Fix members list limit bug [[fc0e378](https://github.com/baptisteArno/typebot.io/commit/fc0e3782b1915b6b247f7ef4901098d0a6a9ac0e)]
+- 🚑 (bot) Fix try catch injection when opening s… [[b71e957](https://github.com/baptisteArno/typebot.io/commit/b71e957e7cb7c64dde5f8614a44bf252b3f8ebc8)]
+- 🚑 (bot) Share inject custom head code again [[3421e48](https://github.com/baptisteArno/typebot.io/commit/3421e4822f18a6c6071a0ecdd06447d9794e6803)]
+- 🐛 (ga) Fix gtag not initializing properly [[8ce5447](https://github.com/baptisteArno/typebot.io/commit/8ce54470126c61b74f331865a8a34ae26dad64c3)]
+- 🐛 (bot) Fix audio and video autoplay error catching [[5587bfb](https://github.com/baptisteArno/typebot.io/commit/5587bfb0e92ed3e43f329a7b21bb34001c98c406)]
+
+### Miscellaneous
+
+- 📝 Remove pixel troubleshoot section [[12ce4eb](https://github.com/baptisteArno/typebot.io/commit/12ce4eb01b8027885ebd58be37870d78d66f9fa9)]
+- 📝 (settings) Update General section [[93337bd](https://github.com/baptisteArno/typebot.io/commit/93337bd1d9ebc2610da910c37974e37cf442f7df)]
+- 📝 Add script block precision [[88e2f50](https://github.com/baptisteArno/typebot.io/commit/88e2f50d35e065188f35b4e49dac2c27f02325f6)]
+- 📝 Add troubleshoot self-host page [[844832f](https://github.com/baptisteArno/typebot.io/commit/844832f310f2ff482fd26b0eb77431fc6cd5fb73)]
+-  Fix typo in inject-runtime-env.sh ([#599](https://github.com/baptisteArno/typebot.io/issues/599)) [[c365c54](https://github.com/baptisteArno/typebot.io/commit/c365c547aaae3c87f533185b02742d5b46ab6c1d)]
+- 📝 (theme) Add change bot avatar guide in docs [[28fd81c](https://github.com/baptisteArno/typebot.io/commit/28fd81cb6597c6f61a4c9eaa21f5c377bcd929c0)]
+- 🧑‍💻 (bot) Wrap custom head code scripts with try catch [[1beb4bb](https://github.com/baptisteArno/typebot.io/commit/1beb4bb1b918976992bfbacf39412d16146a93b3)]
+
+
 <a name="2.15.1"></a>
 ## 2.15.1 (2023-07-07)
 
